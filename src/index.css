@@ -439,28 +439,29 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
 .dict-list-num { font-size: 12px; text-align: right; }
 .icon-btn:disabled { opacity: 0.35; cursor: default; }
 
-/* ── Карточка родителя: сетка «подпись — значения», компактно ── */
 .relatives { display: grid; gap: 14px; }
-.relative { border: 0; border-left: 2px solid var(--accent); margin: 0; padding: 2px 0 6px 12px; min-width: 0; display: grid; gap: 8px; }
-.relative-head .text-action { white-space: nowrap; }
-.relative-head { display: flex; width: 100%; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0; float: left; margin-bottom: 2px; }
-.relative-head + * { clear: both; }
-.rel-top { display: grid; gap: 8px; }
-.rel-legal { min-height: 44px; }
-.rel-row { display: grid; gap: 4px; align-items: start; }
-.rel-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); padding-top: 2px; }
-.rel-items { display: grid; gap: 6px; min-width: 0; }
-.rel-add { justify-self: start; min-height: 32px; }
-/* на телефоне: вид и корзина — первой строкой, значение — на всю ширину под ними */
-.multi-row { display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: "kind del" "value value"; gap: 6px; align-items: start; }
-.multi-row--plain { grid-template-areas: "value del"; }
-.multi-row > .dd { grid-area: kind; max-width: 220px; }
-.multi-row > .input { grid-area: value; }
-.multi-row > .icon-btn { grid-area: del; }
-.multi-row + .multi-row { margin-top: 4px; }
-.multi-row .input { min-width: 0; }
-.multi-row textarea.input { min-height: 44px; field-sizing: content; resize: vertical; }
 .rel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+
+/* ── Форма ребёнка и контакты родителей: одна сетка «вид | значение | действие» ── */
+.child-fields { display: grid; gap: 10px; }
+.rel-title { margin: 20px 0 8px; }
+.relatives { display: grid; gap: 0; }
+.relative { border: 0; border-top: 1px dashed var(--dash); margin: 0; padding: 12px 0; min-width: 0; display: grid; gap: 6px; }
+.relative:first-child { border-top: 0; padding-top: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* телефон: вид и корзина — строкой, значение под ними во всю ширину */
+.rel-line { display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: "kind act" "value value"; gap: 6px; align-items: end; }
+.rel-kind { grid-area: kind; min-width: 0; }
+.rel-kind > .field-label { display: block; margin-bottom: 5px; }
+.rel-kind .dd { max-width: 240px; }
+.rel-value { grid-area: value; min-width: 0; }
+.rel-value .field-label { display: block; margin-bottom: 5px; }
+.rel-act { grid-area: act; }
+.rel-tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); padding-bottom: 2px; }
+.rel-line textarea.input { min-height: 44px; field-sizing: content; resize: vertical; }
+.rel-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 16px; }
+.rel-adds { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.rel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-top: 12px; border-top: 1px dashed var(--dash); }
 
 /* ── Справка, заметки ─────────────────────────────────── */
 .help-note { border-left: 1px solid var(--accent); padding: 2px 0 2px 14px; margin: 14px 0; font-size: 13px; max-width: 68ch; }
@@ -499,20 +500,21 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
   .doc-mean-inline { display: none; }
   .lib-row textarea.input { font-size: 13px; }
   .dict-table .input { font-size: 13px; }
-  .rel-top { grid-template-columns: 200px minmax(0, 1fr) auto; align-items: end; column-gap: 10px; }
-  .rel-legal { min-height: 38px; white-space: nowrap; }
-  .rel-row { grid-template-columns: 120px minmax(0, 1fr); column-gap: 10px; }
-  .rel-label { padding-top: 11px; }
-  .rel-top .rel-label, .rel-top .field-label { padding-top: 0; }
-  .relative .input { padding: 8px 10px; }
-  .relative .dd--light .dd-btn { min-height: 38px; }
-  .relative .icon-btn { width: 38px; height: 38px; }
-  .rel-items { max-width: 760px; }
-  .multi-row { grid-template-columns: 160px minmax(0, 1fr) 38px; grid-template-areas: "kind value del"; }
-  .multi-row--plain { grid-template-columns: minmax(0, 1fr) 38px; grid-template-areas: "value del"; }
-  .multi-row + .multi-row { margin-top: 0; }
-  .multi-row textarea.input { min-height: 38px; }
-  .rel-add { min-height: 28px; }
+  .child-fields { grid-template-columns: minmax(0, 1.2fr) 170px minmax(0, 1fr); align-items: end; }
+  .child-fields .child-note { grid-column: 1 / -1; }
+  /* поля формы на компьютере — одной высоты 38 px: ввод, выпадающий список, кнопка-иконка */
+  .form .input, .child-fields .input, .relatives .input { padding: 8px 10px; min-height: 38px; }
+  .form input.input, .child-fields input.input, .relatives input.input { height: 38px; }
+  .relatives .dd--light .dd-btn, .form .dd--light .dd-btn { min-height: 38px; }
+  .rel-line { grid-template-columns: 180px minmax(0, 1fr) 38px; grid-template-areas: "kind value act"; gap: 8px; align-items: center; }
+  .rel-line--head { align-items: end; }
+  .rel-kind .dd { max-width: none; }
+  .rel-act .icon-btn { width: 38px; height: 38px; }
+  .rel-tag { padding: 0 0 0 11px; }
+  .rel-line textarea.input { min-height: 38px; }
+  .rel-foot { margin-left: 188px; margin-right: 46px; }
+  .rel-foot .check { min-height: 32px; }
+  .rel-adds .text-action { min-height: 32px; }
   .dict-list-row { grid-template-columns: 22px minmax(0, 1fr) 34px 34px 34px; }
   .dict-list-row .icon-btn { width: 34px; height: 34px; }
   .mark--wide { width: auto; }

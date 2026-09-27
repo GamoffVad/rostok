@@ -151,13 +151,13 @@ function ChildForm({ child }) {
   }
   return (
     <form onSubmit={save}>
-      <div className="form-grid">
+      <div className="child-fields">
         <label className="field"><span className="field-label">Фамилия и имя</span><input className="input" value={form.name} onChange={set('name')} /></label>
         <label className="field"><span className="field-label">Дата рождения</span><input className="input" type="date" value={form.birthDate} onChange={set('birthDate')} /></label>
-        <label className="field span-2"><span className="field-label">Заключение ТПМПК</span><input className="input" value={form.tpmpk} onChange={set('tpmpk')} placeholder="ТНР, ОНР III уровня…" /></label>
-        <label className="field span-2"><span className="field-label">Заметки</span><textarea className="input" rows={2} value={form.note} onChange={set('note')} placeholder="Анамнез, особенности, договорённости с родителями" /></label>
+        <label className="field"><span className="field-label">Заключение ТПМПК</span><input className="input" value={form.tpmpk} onChange={set('tpmpk')} placeholder="ТНР, ОНР III уровня…" /></label>
+        <label className="field child-note"><span className="field-label">Заметки</span><textarea className="input" rows={2} value={form.note} onChange={set('note')} placeholder="Анамнез, особенности, договорённости с родителями" /></label>
       </div>
-      <h3 className="h3">Родители и родственники</h3>
+      <h3 className="h3 rel-title">Родители и родственники</h3>
       <RelativesEditor value={form.relatives} onChange={(relatives) => { setForm({ ...form, relatives }); setSaved(false) }} />
       <div className="form-actions" style={{ marginTop: 12, alignItems: 'center' }}>
         <button className="btn-ghost" type="submit" disabled={!dirty || !form.name.trim()}>Сохранить сведения</button>

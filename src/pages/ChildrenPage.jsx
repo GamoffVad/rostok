@@ -65,12 +65,12 @@ export default function ChildrenPage({ db }) {
           </div>
           {addMode === 'one' ? (
             <form onSubmit={addOne} style={{ display: 'grid', gap: 12 }}>
-              <div className="form-grid">
+              <div className="child-fields">
                 <label className="field"><span className="field-label">Фамилия и имя ребёнка</span><input className="input" autoFocus value={one.name} onChange={(e) => setOne({ ...one, name: e.target.value })} /></label>
                 <label className="field"><span className="field-label">Дата рождения</span><input className="input" type="date" value={one.birthDate} onChange={(e) => setOne({ ...one, birthDate: e.target.value })} /></label>
-                <label className="field span-2"><span className="field-label">Заключение ТПМПК</span><input className="input" value={one.tpmpk} onChange={(e) => setOne({ ...one, tpmpk: e.target.value })} placeholder="необязательно" /></label>
+                <label className="field"><span className="field-label">Заключение ТПМПК</span><input className="input" value={one.tpmpk} onChange={(e) => setOne({ ...one, tpmpk: e.target.value })} placeholder="необязательно" /></label>
               </div>
-              <h3 className="h3" style={{ margin: '6px 0 0' }}>Родители и родственники</h3>
+              <h3 className="h3 rel-title">Родители и родственники</h3>
               <RelativesEditor value={one.relatives} onChange={(relatives) => setOne({ ...one, relatives })} />
               <div className="form-actions">
                 <button className="btn-primary" type="submit" disabled={!one.name.trim()}>Добавить в «{group.name}»</button>

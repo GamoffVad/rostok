@@ -35,27 +35,21 @@ export const addressesText = (r) => normalizeRelative(r).addresses.map((a) => (a
 // Варианты из словаря; значение не из словаря (старая запись или удалённый вариант) остаётся выбранным.
 const dictOptions = (list, current) => [...list, ...(current && !list.includes(current) ? [current] : [])].map((v) => ({ value: v, label: v }))
 
-// Строка «подпись — значения»: телефоны, почты, адреса.
-function MultiRow({ title, items, kinds, type = 'text', inputMode, placeholder, addLabel, multiline, onChange }) {
-  const set = (id, patch) => onChange(items.map((x) => (x.id === id ? { ...x, ...patch } : x)))
+// Одна сетка на всю карточку: вид | значение | действие.
+// Вид — выпадающий список из словаря или неизменяемая подпись («эл. почта», «примечание»).
+function Line({ kind, children, action, head }) {
   return (
-    <div className="rel-row">
-      <span className="rel-label">{title}</span>
-      <div className="rel-items">
-        {items.map((x) => (
-          <div className={`multi-row${kinds ? '' : ' multi-row--plain'}`} key={x.id}>
-            {kinds && <Dropdown variant="light" label={`${title}: вид`} value={x.kind} placeholder="вид" options={dictOptions(kinds, x.kind)} onChange={(kind) => set(x.id, { kind })} />}
-            {multiline
-              ? <textarea className="input" rows={1} value={x.value} onChange={(e) => set(x.id, { value: e.target.value })} placeholder={placeholder} aria-label={title} />
-              : <input className="input" type={type} inputMode={inputMode} autoComplete="off" value={x.value} onChange={(e) => set(x.id, { value: e.target.value })} placeholder={placeholder} aria-label={title} />}
-            <button type="button" className="icon-btn danger" onClick={() => onChange(items.filter((y) => y.id !== x.id))} aria-label={`Удалить: ${title.toLowerCase()}`} title="Удалить"><TrashIcon /></button>
-          </div>
-        ))}
-        <button type="button" className="text-action rel-add" onClick={() => onChange([...items, entry(kinds ? kinds[items.length % kinds.length] || '' : '')])}><span>+ {addLabel}</span></button>
-      </div>
+    <div className={`rel-line${head ? ' rel-line--head' : ''}`}>
+      <div className="rel-kind">{kind}</div>
+      <div className="rel-value">{children}</div>
+      <div className="rel-act">{action}</div>
     </div>
   )
 }
+
+const DeleteBtn = ({ label, onClick }) => (
+  <button type="button" className="icon-btn danger" onClick={onClick} aria-label={label} title={label}><TrashIcon /></button>
+)
 
 export default function RelativesEditor({ value = [], onChange }) {
   const list = value.map(normalizeRelative)
@@ -67,40 +61,58 @@ export default function RelativesEditor({ value = [], onChange }) {
 
   return (
     <div className="relatives">
-      {list.map((r, i) => (
-        <fieldset className="relative" key={r.id}>
-          <legend className="relative-head">
-            <span className="caps">Контакт {i + 1}{r.legal ? ' · законный представитель' : ''}</span>
-            <button type="button" className="text-action danger" onClick={() => onChange(list.filter((x) => x.id !== r.id))}><span>удалить контакт</span></button>
-          </legend>
+      {list.map((r, i) => {
+        const setItem = (key, id, patch) => set(r.id, { [key]: r[key].map((x) => (x.id === id ? { ...x, ...patch } : x)) })
+        const drop = (key, id) => set(r.id, { [key]: r[key].filter((x) => x.id !== id) })
+        const add = (key, kinds) => set(r.id, { [key]: [...r[key], entry(kinds ? kinds[r[key].length % kinds.length] || '' : '')] })
+        const kindSelect = (key, x, kinds, title) => (
+          <Dropdown variant="light" label={`${title}: вид`} value={x.kind} placeholder="вид" options={dictOptions(kinds, x.kind)} onChange={(kind) => setItem(key, x.id, { kind })} />
+        )
+        return (
+          <fieldset className="relative" key={r.id}>
+            <legend className="sr-only">Контакт {i + 1}</legend>
 
-          <div className="rel-top">
-            <div className="field">
-              <span className="field-label">Кем приходится</span>
-              <Dropdown variant="light" label="Кем приходится" value={r.role} placeholder="выберите" options={dictOptions(ROLES, r.role)} onChange={(role) => set(r.id, { role })} />
+            <Line head
+              kind={<><span className="field-label">Кем приходится</span>
+                <Dropdown variant="light" label="Кем приходится" value={r.role} placeholder="выберите" options={dictOptions(ROLES, r.role)} onChange={(role) => set(r.id, { role })} /></>}
+              action={<DeleteBtn label={`Удалить контакт ${i + 1}`} onClick={() => onChange(list.filter((x) => x.id !== r.id))} />}>
+              <label className="field"><span className="field-label">ФИО</span>
+                <input className="input" value={r.name} onChange={(e) => set(r.id, { name: e.target.value })} placeholder="Фамилия Имя Отчество" autoComplete="off" /></label>
+            </Line>
+
+            {r.phones.map((x) => (
+              <Line key={x.id} kind={kindSelect('phones', x, PHONE_KINDS, 'Телефон')} action={<DeleteBtn label="Удалить телефон" onClick={() => drop('phones', x.id)} />}>
+                <input className="input" type="tel" inputMode="tel" autoComplete="off" value={x.value} onChange={(e) => setItem('phones', x.id, { value: e.target.value })} placeholder="+7 …" aria-label="Телефон" />
+              </Line>
+            ))}
+            {r.emails.map((x) => (
+              <Line key={x.id} kind={<span className="rel-tag">эл. почта</span>} action={<DeleteBtn label="Удалить почту" onClick={() => drop('emails', x.id)} />}>
+                <input className="input" type="email" inputMode="email" autoComplete="off" value={x.value} onChange={(e) => setItem('emails', x.id, { value: e.target.value })} placeholder="name@example.ru" aria-label="Эл. почта" />
+              </Line>
+            ))}
+            {r.addresses.map((x) => (
+              <Line key={x.id} kind={kindSelect('addresses', x, ADDRESS_KINDS, 'Адрес')} action={<DeleteBtn label="Удалить адрес" onClick={() => drop('addresses', x.id)} />}>
+                <textarea className="input" rows={1} value={x.value} onChange={(e) => setItem('addresses', x.id, { value: e.target.value })} placeholder="Город, улица, дом, квартира" aria-label="Адрес" />
+              </Line>
+            ))}
+            <Line kind={<span className="rel-tag">примечание</span>}>
+              <input className="input" value={r.note} onChange={(e) => set(r.id, { note: e.target.value })} placeholder="Удобное время для связи, кто забирает ребёнка…" aria-label="Примечание" />
+            </Line>
+
+            <div className="rel-foot">
+              <label className="check"><input type="checkbox" checked={r.legal} onChange={() => set(r.id, { legal: !r.legal })} /> Законный представитель</label>
+              <span className="rel-adds">
+                <button type="button" className="text-action" onClick={() => add('phones', PHONE_KINDS)}><span>+ телефон</span></button>
+                <button type="button" className="text-action" onClick={() => add('emails')}><span>+ почта</span></button>
+                <button type="button" className="text-action" onClick={() => add('addresses', ADDRESS_KINDS)}><span>+ адрес</span></button>
+              </span>
             </div>
-            <label className="field">
-              <span className="field-label">ФИО</span>
-              <input className="input" value={r.name} onChange={(e) => set(r.id, { name: e.target.value })} placeholder="Фамилия Имя Отчество" autoComplete="off" />
-            </label>
-            <label className="check rel-legal"><input type="checkbox" checked={r.legal} onChange={() => set(r.id, { legal: !r.legal })} /> Законный представитель</label>
-          </div>
-
-          <MultiRow title="Телефоны" items={r.phones} kinds={PHONE_KINDS} type="tel" inputMode="tel"
-            placeholder="+7 …" addLabel="телефон" onChange={(phones) => set(r.id, { phones })} />
-          <MultiRow title="Эл. почта" items={r.emails} type="email" inputMode="email"
-            placeholder="name@example.ru" addLabel="почта" onChange={(emails) => set(r.id, { emails })} />
-          <MultiRow title="Адреса" items={r.addresses} kinds={ADDRESS_KINDS} multiline
-            placeholder="Город, улица, дом, квартира" addLabel="адрес" onChange={(addresses) => set(r.id, { addresses })} />
-          <label className="rel-row">
-            <span className="rel-label">Примечание</span>
-            <input className="input" value={r.note} onChange={(e) => set(r.id, { note: e.target.value })} placeholder="Удобное время для связи, кто забирает ребёнка…" />
-          </label>
-        </fieldset>
-      ))}
+          </fieldset>
+        )
+      })}
       <div className="rel-actions">
         <button type="button" className="btn-ghost" onClick={() => onChange([...list, newRelative(nextRole())])}><PlusIcon /> Добавить родителя или родственника</button>
-        <span className="faint">Варианты «Кем приходится» и видов телефонов и адресов — в «Администрирование → Словари».</span>
+        <span className="faint">Варианты «Кем приходится», видов телефонов и адресов — в «Администрирование → Словари».</span>
       </div>
     </div>
   )
