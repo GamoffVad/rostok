@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # нужны все теги: описание сравнивает версию с предыдущей
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -21,16 +23,8 @@ jobs:
       - run: npm run build
       - name: Версия из тега совпадает с package.json
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
-      - name: Описание из CHANGELOG
-        id: notes
-        # нет раздела версии в CHANGELOG — релиз всё равно создаётся, описание собирается из коммитов
-        run: |
-          if node scripts/changelog-notes.mjs "${GITHUB_REF_NAME#v}" > notes.md; then
-            echo "source=changelog" >> "$GITHUB_OUTPUT"
-          else
-            echo "source=generated" >> "$GITHUB_OUTPUT"
-          fi
-          cat notes.md
+      - name: Описание — изменения по сравнению с предыдущей версией
+        run: node scripts/release-notes.mjs "$GITHUB_REF_NAME" > notes.md && cat notes.md
       - name: Архив сборки и документация
         run: |
           (cd dist && zip -r "../rostok-${GITHUB_REF_NAME}.zip" .)
@@ -38,6 +32,4 @@ jobs:
       - name: Создать релиз
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          if [ "${{ steps.notes.outputs.source }}" = "changelog" ]; then NOTES=(--notes-file notes.md); else NOTES=(--generate-notes); fi
-          gh release create "$GITHUB_REF_NAME" --title "Росток $GITHUB_REF_NAME" "${NOTES[@]}" "rostok-${GITHUB_REF_NAME}.zip" "rostok-documentation-${GITHUB_REF_NAME}.pdf"
+        run: gh release create "$GITHUB_REF_NAME" --title "Росток $GITHUB_REF_NAME" --notes-file notes.md "rostok-${GITHUB_REF_NAME}.zip" "rostok-documentation-${GITHUB_REF_NAME}.pdf"
