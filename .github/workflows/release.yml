@@ -1,0 +1,34 @@
+# Релиз на GitHub по тегу vX.Y.Z: проверяем сборку и берём описание версии из CHANGELOG.md.
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Версия из тега совпадает с package.json
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - name: Описание из CHANGELOG
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="$VERSION" '$0 ~ "^## \[" v "\]" {f=1; next} /^## \[/ {f=0} /^\[.*\]: / {f=0} f' CHANGELOG.md > notes.md
+          cat notes.md
+      - name: Архив сборки
+        run: cd dist && zip -r "../rostok-${GITHUB_REF_NAME}.zip" .
+      - name: Создать релиз
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "Росток $GITHUB_REF_NAME" --notes-file notes.md "rostok-${GITHUB_REF_NAME}.zip" "DOC/Росток — документация.pdf"

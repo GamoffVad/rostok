@@ -1,0 +1,27 @@
+{
+  "name": "rostok",
+  "private": true,
+  "version": "1.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "release:patch": "npm version patch -m \"Версия %s\" && git push --follow-tags",
+    "release:minor": "npm version minor -m \"Версия %s\" && git push --follow-tags",
+    "release:major": "npm version major -m \"Версия %s\" && git push --follow-tags"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "description": "Росток — мониторинг речевого и нейропсихологического развития детей для психолога и логопеда"
+}

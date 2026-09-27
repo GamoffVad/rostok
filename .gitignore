@@ -1,0 +1,10 @@
+node_modules
+dist
+.vercel
+# исходная книга Excel содержит настоящие фамилии детей — не публиковать
+DOC/*.xls
+DOC/*.xlsx
+
+.vercel
+.env*
+.claude/
