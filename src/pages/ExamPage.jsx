@@ -4,11 +4,11 @@ import { useSelection, setUi } from '../lib/ui'
 import { go, href } from '../lib/router'
 import { ALL_SECTIONS, BLOCKS, SECTION_BY_ID, isScored, optionsFor, sectionItems } from '../data/methodology'
 import { fmt, sectionStats, totalProgress } from '../lib/calc'
-import Dropdown from '../components/Dropdown'
-import FilterCard from '../components/FilterCard'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
 import { GroupFilter, PeriodFilter } from '../components/Selectors'
-import { Level } from '../components/Level'
-import { ArrowIcon } from '../components/Icons'
+import { Level } from '../ui/Level'
+import { ArrowIcon } from '../ui/Icons'
 
 export default function ExamPage({ db, childId }) {
   const { group, period, sectionId } = useSelection(db)
@@ -139,7 +139,7 @@ export default function ExamPage({ db, childId }) {
                       </span>
                       <span className={`marks${wide ? ' marks--stack' : ''}`} role="group" aria-label={item.label}>
                         {options.map((o) => (
-                          <button key={o.value} type="button" title={o.label} aria-pressed={v === o.value}
+                          <button key={o.value} type="button" data-tip={o.label} aria-pressed={v === o.value}
                             className={`mark${wide ? ' mark--wide is-accent' : ''}${pair ? ' mark--wide mark--half is-accent' : ''}${section.kind === 'scale' && v === o.value ? ` lvl-${o.value}` : ''}${section.kind === 'sound' && v === o.value ? ` lvl-${o.score}` : ''}`}
                             onClick={() => setValue(item, o.value)}>
                             {section.kind === 'scale' || section.kind === 'sound' ? o.mark : o.label}

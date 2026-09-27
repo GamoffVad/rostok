@@ -1,6 +1,7 @@
 import { uid } from '../lib/store'
-import Dropdown from './Dropdown'
-import { PlusIcon, TrashIcon } from './Icons'
+import Dropdown from '../ui/Dropdown'
+import Checkbox from '../ui/Checkbox'
+import { PlusIcon, TrashIcon } from '../ui/Icons'
 // Кем приходится, виды телефонов и адресов — словари («Администрирование → Словари»).
 import { ADDRESS_KINDS, PHONE_KINDS, ROLES } from '../data/dictionaries'
 
@@ -48,7 +49,7 @@ function Line({ kind, children, action, head }) {
 }
 
 const DeleteBtn = ({ label, onClick }) => (
-  <button type="button" className="icon-btn danger" onClick={onClick} aria-label={label} title={label}><TrashIcon /></button>
+  <button type="button" className="icon-btn danger" onClick={onClick} aria-label={label} data-tip={label}><TrashIcon /></button>
 )
 
 export default function RelativesEditor({ value = [], onChange }) {
@@ -100,7 +101,7 @@ export default function RelativesEditor({ value = [], onChange }) {
             </Line>
 
             <div className="rel-foot">
-              <label className="check"><input type="checkbox" checked={r.legal} onChange={() => set(r.id, { legal: !r.legal })} /> Законный представитель</label>
+              <Checkbox checked={r.legal} onChange={(legal) => set(r.id, { legal })}>Законный представитель</Checkbox>
               <span className="rel-adds">
                 <button type="button" className="text-action" onClick={() => add('phones', PHONE_KINDS)}><span>+ телефон</span></button>
                 <button type="button" className="text-action" onClick={() => add('emails')}><span>+ почта</span></button>

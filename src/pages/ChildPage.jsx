@@ -3,12 +3,14 @@ import { actions, periodLabel, periodShort, scoresOf } from '../lib/store'
 import { go, href } from '../lib/router'
 import { BLOCKS, NEURO_SCORED, SPEECH_SECTIONS, isScored } from '../data/methodology'
 import { ageText, blockMean, fmt, levelOf, outcome, sectionStats, totalProgress } from '../lib/calc'
+import { birthMin, todayIso } from '../lib/dates'
 import { buildReport } from '../lib/report'
-import Dropdown from '../components/Dropdown'
-import FilterCard from '../components/FilterCard'
-import { Delta, Level } from '../components/Level'
-import { Dumbbell, Radar, TrendLine } from '../components/Charts'
-import { CheckIcon, CopyIcon, PrintIcon } from '../components/Icons'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
+import DatePicker from '../ui/DatePicker'
+import { Delta, Level } from '../ui/Level'
+import { Dumbbell, Radar, TrendLine } from '../ui/Charts'
+import { CheckIcon, CopyIcon, PrintIcon } from '../ui/Icons'
 import ProgramTab from './ProgramTab'
 import RelativesEditor, { cleanRelatives, relativesOf } from '../components/RelativesEditor'
 
@@ -150,10 +152,10 @@ function ChildForm({ child }) {
     setSaved(true)
   }
   return (
-    <form onSubmit={save}>
+    <form noValidate onSubmit={save}>
       <div className="child-fields">
         <label className="field"><span className="field-label">Фамилия и имя</span><input className="input" value={form.name} onChange={set('name')} /></label>
-        <label className="field"><span className="field-label">Дата рождения</span><input className="input" type="date" value={form.birthDate} onChange={set('birthDate')} /></label>
+        <div className="field"><span className="field-label">Дата рождения</span><DatePicker label="Дата рождения" value={form.birthDate} onChange={(birthDate) => { setForm({ ...form, birthDate }); setSaved(false) }} min={birthMin()} max={todayIso()} /></div>
         <label className="field"><span className="field-label">Заключение ТПМПК</span><input className="input" value={form.tpmpk} onChange={set('tpmpk')} placeholder="ТНР, ОНР III уровня…" /></label>
         <label className="field child-note"><span className="field-label">Заметки</span><textarea className="input" rows={2} value={form.note} onChange={set('note')} placeholder="Анамнез, особенности, договорённости с родителями" /></label>
       </div>

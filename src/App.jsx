@@ -2,7 +2,8 @@ import { useEffect } from 'react'
 import { actions, useDb, hasSaveError } from './lib/store'
 import { buildDemo } from './lib/demo'
 import { useRoute, href } from './lib/router'
-import { DatabaseIcon, HelpIcon } from './components/Icons'
+import { DatabaseIcon, HelpIcon } from './ui/Icons'
+import TooltipLayer from './ui/Tooltip'
 import ChildrenPage from './pages/ChildrenPage'
 import ChildPage from './pages/ChildPage'
 import ExamPage from './pages/ExamPage'
@@ -79,14 +80,15 @@ export default function App() {
             ))}
           </nav>
           <div className="topbar-tools">
-            <a className="round-btn" href={href('/admin/data')} title="Администрирование: данные и словари" aria-label="Администрирование" aria-current={section === 'admin' || section === 'data' ? 'page' : undefined}><DatabaseIcon /></a>
-            <a className="round-btn" href={href('/help')} title="Справка по методике" aria-label="Справка" aria-current={section === 'help' ? 'page' : undefined}><HelpIcon /></a>
+            <a className="round-btn" href={href('/admin/data')} data-tip="Администрирование: данные и словари" aria-label="Администрирование" aria-current={section === 'admin' || section === 'data' ? 'page' : undefined}><DatabaseIcon /></a>
+            <a className="round-btn" href={href('/help')} data-tip="Справка по методике" aria-label="Справка" aria-current={section === 'help' ? 'page' : undefined}><HelpIcon /></a>
           </div>
         </header>
         {hasSaveError() && <p className="status bad">Не удалось сохранить изменения: хранилище браузера переполнено или недоступно. Выгрузите резервную копию в разделе «Данные».</p>}
         <main>{page}</main>
       </div>
       <Footer />
+      <TooltipLayer />
     </div>
   )
 }
@@ -96,7 +98,7 @@ function Footer() {
     <footer className="app-footer">
       <div className="app-footer-inner">
         <span><span className="footer-long">Росток — динамика развития ребёнка · данные хранятся только в этом браузере</span><span className="footer-short">Росток · данные в этом браузере</span></span>
-        <span className="app-version" title={`Сборка от ${__BUILD_DATE__}`}>v{__APP_VERSION__}</span>
+        <span className="app-version" data-tip={`Сборка от ${__BUILD_DATE__}`}>v{__APP_VERSION__}</span>
       </div>
     </footer>
   )

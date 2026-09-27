@@ -5,12 +5,12 @@ import { href } from '../lib/router'
 import { BLOCKS, isScored } from '../data/methodology'
 import { OUTCOMES, blockMean, fmt, levelDistribution, levelOf, outcome, sectionStats } from '../lib/calc'
 import { exportSheets } from '../lib/excel'
-import Dropdown from '../components/Dropdown'
-import FilterCard from '../components/FilterCard'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
 import { GroupFilter } from '../components/Selectors'
-import { Delta, DistBar, Level, LevelLegend } from '../components/Level'
-import { Donut, Dumbbell, LevelColumns, Radar } from '../components/Charts'
-import { DownloadIcon } from '../components/Icons'
+import { Delta, DistBar, Level, LevelLegend } from '../ui/Level'
+import { Donut, Dumbbell, LevelColumns, Radar } from '../ui/Charts'
+import { DownloadIcon } from '../ui/Icons'
 
 // Палитра итогов проверена на различимость: зелёный, ежевика, синий, жёлтый, красный.
 const OUTCOME_COLORS = { norm: '#3A9466', major: '#6B3A78', minor: '#3F7FB5', none: '#D1AE1E', worse: '#B23A48' }
@@ -175,7 +175,7 @@ export default function DynamicsPage({ db }) {
                 <thead>
                   <tr>
                     <th rowSpan={2}>Ребёнок</th>
-                    {sections.map((s) => <th key={s.id} colSpan={2} className="grp" title={s.title}>{s.short}</th>)}
+                    {sections.map((s) => <th key={s.id} colSpan={2} className="grp" data-tip={s.title}>{s.short}</th>)}
                     <th colSpan={3} className="grp">Средний балл</th>
                     <th rowSpan={2} className="sep">Итог</th>
                   </tr>

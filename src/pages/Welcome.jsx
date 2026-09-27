@@ -1,17 +1,16 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
+import FilePick from '../ui/FilePick'
 import { actions } from '../lib/store'
 import { buildDemo } from '../lib/demo'
 import { importLegacyWorkbook } from '../lib/excel'
-import { PlusIcon, UploadIcon } from '../components/Icons'
+import { PlusIcon, UploadIcon } from '../ui/Icons'
 
 export default function Welcome() {
   const [name, setName] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const file = useRef(null)
 
-  const onFile = async (e) => {
-    const f = e.target.files?.[0]
+  const onFile = async (f) => {
     if (!f) return
     setBusy(true)
     setError('')
@@ -22,7 +21,6 @@ export default function Welcome() {
       setError(err.message || 'Не удалось прочитать файл.')
     } finally {
       setBusy(false)
-      e.target.value = ''
     }
   }
 
@@ -42,17 +40,16 @@ export default function Welcome() {
         <li><div><b>Распечатайте заключение</b><span>Черновик собирается из баллов: остаётся поправить формулировки.</span></div></li>
       </ol>
 
-      <form className="form" style={{ maxWidth: 620 }} onSubmit={(e) => { e.preventDefault(); if (name.trim()) actions.addGroup(name) }}>
+      <form noValidate className="form" style={{ maxWidth: 620 }} onSubmit={(e) => { e.preventDefault(); if (name.trim()) actions.addGroup(name) }}>
         <label className="field">
           <span className="field-label">Название группы</span>
           <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Группа № 11, логопедическая" />
         </label>
         <div className="form-actions">
           <button className="btn-primary" type="submit" disabled={!name.trim()}><PlusIcon /> Создать группу</button>
-          <button className="btn-ghost" type="button" disabled={busy} onClick={() => file.current.click()}><UploadIcon /> {busy ? 'Читаю файл…' : 'Загрузить прежний файл Excel'}</button>
+          <FilePick accept=".xls,.xlsx" disabled={busy} onFile={onFile}><UploadIcon /> {busy ? 'Читаю файл…' : 'Загрузить прежний файл Excel'}</FilePick>
           <button className="btn-ghost" type="button" onClick={() => actions.merge(buildDemo())}>Открыть пример</button>
         </div>
-        <input ref={file} type="file" accept=".xls,.xlsx" hidden onChange={onFile} />
         {error && <p className="status bad">{error}</p>}
       </form>
       <p className="faint" style={{ maxWidth: 620 }}>Прежний файл — это книга «Динамика речевого развития» с листами «Звук…», «Л.Г.С.…», «Фонетика…». Из неё переносятся дети и все проставленные баллы; шкала переводится автоматически.</p>

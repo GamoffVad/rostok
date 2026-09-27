@@ -2,8 +2,8 @@ import { LEVEL } from '../theme'
 import { fmtDelta } from '../lib/calc'
 
 export function Level({ value, title }) {
-  if (value === null || value === undefined) return <span className="lvl lvl-none" title="нет данных">·</span>
-  return <span className={`lvl lvl-${value}`} title={title || LEVEL[value].name}>{value}</span>
+  if (value === null || value === undefined) return <span className="lvl lvl-none" data-tip="нет данных">·</span>
+  return <span className={`lvl lvl-${value}`} data-tip={title || LEVEL[value].name}>{value}</span>
 }
 
 // Дельта среднего балла: балл снизился — улучшение (зелёная), вырос — ухудшение (красная).

@@ -7,11 +7,12 @@ import { ageText, blockMean, fmt, itemScore, levelOf, outcome, sectionStats } fr
 import { buildProgram, exerciseLines } from '../lib/program'
 import { downloadText, exportSheets } from '../lib/excel'
 import { LEVEL } from '../theme'
-import Dropdown from '../components/Dropdown'
-import FilterCard from '../components/FilterCard'
-import { Delta, Level } from '../components/Level'
-import { Dumbbell, Radar, TrendLine } from '../components/Charts'
-import { ArrowIcon, DownloadIcon, PrintIcon } from '../components/Icons'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
+import Checkbox from '../ui/Checkbox'
+import { Delta, Level } from '../ui/Level'
+import { Dumbbell, Radar, TrendLine } from '../ui/Charts'
+import { ArrowIcon, DownloadIcon, PrintIcon } from '../ui/Icons'
 import { addressesText, emailsText, phonesText } from '../components/RelativesEditor'
 
 const PARTS = [
@@ -33,7 +34,7 @@ function Cell({ section, value }) {
   if (!o) return <span className="faint">—</span>
   if (section.kind === 'scale' || section.kind === 'sound') {
     const s = itemScore(section, value)
-    return <span className={`lvl lvl-${s}`} title={o.label}>{o.mark}</span>
+    return <span className={`lvl lvl-${s}`} data-tip={o.label}>{o.mark}</span>
   }
   return <span>{o.label}</span>
 }
@@ -157,9 +158,7 @@ export default function ParentReport({ db, childId, params }) {
         </div>
         <div className="checks" role="group" aria-label="Что включить в отчёт">
           {PARTS.map((p) => (
-            <label key={p.key} className="check">
-              <input type="checkbox" checked={parts[p.key]} onChange={() => setParts({ ...parts, [p.key]: !parts[p.key] })} /> {p.label}
-            </label>
+            <Checkbox key={p.key} checked={parts[p.key]} onChange={(on) => setParts({ ...parts, [p.key]: on })}>{p.label}</Checkbox>
           ))}
         </div>
         <div className="toolbar" style={{ margin: '4px 0 22px' }}>

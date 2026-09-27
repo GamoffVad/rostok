@@ -13,3 +13,6 @@ export const CopyIcon = I(<><rect x="8" y="8" width="12" height="12" rx="1" /><p
 export const CheckIcon = I(<path d="M5 12.5l4.5 4.5L19 7.5" />)
 export const ArrowIcon = I(<path d="M5 12h14M13 6l6 6-6 6" />)
 export const TableIcon = I(<><rect x="4" y="5" width="16" height="14" rx="1" /><path d="M4 10h16M4 14.5h16M10 5v14" /></>)
+export const CalendarIcon = I(<><rect x="4" y="5" width="16" height="15" rx="1" /><path d="M4 10h16M9 3v4M15 3v4" /></>)
+export const ChevronLeftIcon = I(<path d="M15 5l-7 7 7 7" />)
+export const ChevronRightIcon = I(<path d="M9 5l7 7-7 7" />)

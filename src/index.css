@@ -353,7 +353,6 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
 .program-item { padding: 8px 0 10px 10px; border-left: 2px solid var(--accent); margin: 6px 0; }
 .program-item.is-off { border-left-color: transparent; opacity: 0.7; }
 .program-check { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
-.program-check input, .check input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; margin: 0; }
 .program-label { flex: 1; font-size: 13.5px; color: var(--ink); }
 .program-body { padding-left: 28px; }
 .program-body textarea.input { min-height: 0; margin-top: 4px; field-sizing: content; }
@@ -463,6 +462,79 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
 .rel-adds { display: flex; flex-wrap: wrap; gap: 0 16px; }
 .rel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-top: 12px; border-top: 1px dashed var(--dash); }
 
+/* ── Библиотека компонентов: поверхности браузера в палитре приложения ── */
+::selection { background: #E4D6E8; color: var(--ink); }
+input, textarea, [contenteditable] { caret-color: var(--accent); }
+* { scrollbar-width: thin; scrollbar-color: var(--dash) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--dash); border: 3px solid var(--paper); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+textarea::-webkit-resizer { background: linear-gradient(135deg, transparent 55%, var(--dash) 55%, var(--dash) 62%, transparent 62%, transparent 75%, var(--dash) 75%, var(--dash) 82%, transparent 82%); }
+input::-webkit-calendar-picker-indicator { display: none; }
+
+/* Подсказка вместо системного title */
+.tip {
+  position: fixed; z-index: 100; max-width: 280px; pointer-events: none;
+  background: var(--ink); color: var(--sheet); border-radius: 2px;
+  font-size: 12px; line-height: 1.4; padding: 6px 9px; white-space: pre-line;
+}
+
+/* Флажок: квадрат 18 px, рамка чернилами-3 (контраст ≥ 3:1), отмеченный — заливка акцентом */
+.cbx { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; cursor: pointer; font-size: 13.5px; color: var(--ink-2); user-select: none; }
+.cbx-box {
+  width: 18px; height: 18px; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--ink-3); border-radius: 2px; background: var(--sheet); color: transparent;
+  transition: background-color 0.12s ease-out, border-color 0.12s ease-out;
+}
+.cbx:hover .cbx-box { border-color: var(--accent); }
+.cbx.is-on .cbx-box { background: var(--accent); border-color: var(--accent); color: var(--sheet); }
+.cbx input:focus-visible + .cbx-box { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cbx.is-disabled { opacity: 0.55; cursor: default; }
+.cbx-label { min-width: 0; }
+
+/* Выбор файла: перетаскивание подсвечивает кнопку */
+.file-pick.is-over { border-style: solid; border-color: var(--accent); color: var(--accent); background: var(--soft); }
+
+/* Поле даты: маска дд.мм.гггг + кнопка календаря внутри поля */
+.dp { position: relative; min-width: 0; }
+.dp-field { position: relative; }
+.dp-input { padding-right: 44px; font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.dp-toggle {
+  position: absolute; top: 1px; right: 1px; bottom: 1px; width: 42px;
+  display: inline-flex; align-items: center; justify-content: center; color: var(--ink-3); border-left: 1px dashed var(--dash);
+}
+.dp-toggle:hover, .dp-toggle[aria-expanded='true'] { color: var(--accent); }
+.dp.is-invalid .input { border-color: var(--danger); }
+.dp-error { display: block; margin-top: 4px; font-size: 12px; font-weight: 600; color: var(--danger); }
+.dp-pop {
+  position: absolute; z-index: 45; top: calc(100% + 4px); left: 0; width: 320px; max-width: calc(100vw - 28px);
+  background: var(--sheet); border: 1px dashed var(--dash); border-radius: 2px; padding: 10px;
+}
+.dp-head { display: grid; grid-template-columns: 44px minmax(0, 1.3fr) minmax(0, 1fr) 44px; gap: 6px; align-items: center; margin-bottom: 8px; }
+.dp-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.dp-wd { text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); padding: 4px 0 6px; }
+.dp-day {
+  height: 40px; margin: 1px; border-radius: 2px; font-family: var(--mono); font-size: 13px; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.dp-day:hover { background: var(--soft); color: var(--accent); }
+.dp-day.is-off { color: var(--faint); }
+.dp-day.is-today { box-shadow: inset 0 -2px 0 var(--accent); font-weight: 600; }
+.dp-day.is-selected { background: var(--accent); color: var(--sheet); font-weight: 600; box-shadow: none; }
+.dp-day.is-disabled { color: var(--dash); cursor: default; background: none; }
+.dp-day:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.dp-foot { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px dashed var(--dash); }
+
+/* ── Витрина компонентов ─────────────────────────────── */
+.kit-spec { padding: 18px 0; }
+.kit-code { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.kit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.kit-grid { display: grid; gap: 14px; }
+.kit-note { margin: 0; align-self: center; }
+.kit-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
+.kit-icon { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 8px; border: 1px dashed var(--dash); border-radius: 2px; font-size: 12px; color: var(--ink-2); }
+
 /* ── Справка, заметки ─────────────────────────────────── */
 .help-note { border-left: 1px solid var(--accent); padding: 2px 0 2px 14px; margin: 14px 0; font-size: 13px; max-width: 68ch; }
 .help-note.amber { border-left-color: var(--amber); }
@@ -500,6 +572,13 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
   .doc-mean-inline { display: none; }
   .lib-row textarea.input { font-size: 13px; }
   .dict-table .input { font-size: 13px; }
+  .kit-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .cbx { min-height: 32px; }
+  .dp-day { height: 34px; }
+  .dp-head { grid-template-columns: 34px minmax(0, 1.6fr) minmax(0, 1fr) 34px; }
+  .dp-head .icon-btn { width: 34px; height: 34px; }
+  .dp-pop { width: 320px; }
+  .form .dp-toggle, .child-fields .dp-toggle { width: 36px; }
   .child-fields { grid-template-columns: minmax(0, 1.2fr) 170px minmax(0, 1fr); align-items: end; }
   .child-fields .child-note { grid-column: 1 / -1; }
   /* поля формы на компьютере — одной высоты 38 px: ввод, выпадающий список, кнопка-иконка */
@@ -513,7 +592,6 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
   .rel-tag { padding: 0 0 0 11px; }
   .rel-line textarea.input { min-height: 38px; }
   .rel-foot { margin-left: 188px; margin-right: 46px; }
-  .rel-foot .check { min-height: 32px; }
   .rel-adds .text-action { min-height: 32px; }
   .dict-list-row { grid-template-columns: 22px minmax(0, 1fr) 34px 34px 34px; }
   .dict-list-row .icon-btn { width: 34px; height: 34px; }

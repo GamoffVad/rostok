@@ -3,10 +3,11 @@ import { actions, libraryOf, periodLabel, programOf, scoresOf } from '../lib/sto
 import { href } from '../lib/router'
 import { THRESHOLDS, buildProgram, exerciseLines } from '../lib/program'
 import { fmt } from '../lib/calc'
-import Dropdown from '../components/Dropdown'
-import FilterCard from '../components/FilterCard'
-import { Level } from '../components/Level'
-import { PrintIcon } from '../components/Icons'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
+import { Level } from '../ui/Level'
+import { PrintIcon } from '../ui/Icons'
+import Checkbox from '../ui/Checkbox'
 import { setUi } from '../lib/ui'
 
 export default function ProgramTab({ db, child, filled }) {
@@ -61,11 +62,10 @@ export default function ProgramTab({ db, child, filled }) {
                 const lines = exerciseLines(library[item.id])
                 return (
                   <div key={item.id} className={`program-item${off ? ' is-off' : ''}`}>
-                    <label className="program-check">
-                      <input type="checkbox" checked={!off} onChange={() => toggle(item.id)} />
+                    <Checkbox className="program-check" checked={!off} onChange={() => toggle(item.id)}>
                       <span className="program-label">{section.kind === 'sound' ? <>Звук <b className="num">[{item.label}]</b></> : item.label}</span>
-                      <span className={`lvl${score !== null ? ` lvl-${score}` : ' lvl-none'}`} title={mark?.label}>{mark?.mark ?? '·'}</span>
-                    </label>
+                      <span className={`lvl${score !== null ? ` lvl-${score}` : ' lvl-none'}`} data-tip={mark?.label}>{mark?.mark ?? '·'}</span>
+                    </Checkbox>
                     {!off && (
                       <div className="program-body">
                         {lines.length ? (

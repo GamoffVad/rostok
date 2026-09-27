@@ -3,11 +3,13 @@ import { actions, childrenOf, scoresOf } from '../lib/store'
 import { useSelection, setUi } from '../lib/ui'
 import { href } from '../lib/router'
 import { ageText, blockMean, fmt, levelOf, totalProgress } from '../lib/calc'
+import { birthMin, todayIso } from '../lib/dates'
 import { BLOCKS } from '../data/methodology'
 import { GroupFilter, PeriodFilter } from '../components/Selectors'
-import FilterCard from '../components/FilterCard'
-import { Level } from '../components/Level'
-import { PlusIcon, TrashIcon } from '../components/Icons'
+import FilterCard from '../ui/FilterCard'
+import DatePicker from '../ui/DatePicker'
+import { Level } from '../ui/Level'
+import { PlusIcon, TrashIcon } from '../ui/Icons'
 import RelativesEditor, { cleanRelatives, newRelative, phonesText } from '../components/RelativesEditor'
 
 export default function ChildrenPage({ db }) {
@@ -64,10 +66,10 @@ export default function ChildrenPage({ db }) {
             <button type="button" role="tab" aria-selected={addMode === 'list'} onClick={() => setAddMode('list')}>Списком фамилий</button>
           </div>
           {addMode === 'one' ? (
-            <form onSubmit={addOne} style={{ display: 'grid', gap: 12 }}>
+            <form noValidate onSubmit={addOne} style={{ display: 'grid', gap: 12 }}>
               <div className="child-fields">
                 <label className="field"><span className="field-label">Фамилия и имя ребёнка</span><input className="input" autoFocus value={one.name} onChange={(e) => setOne({ ...one, name: e.target.value })} /></label>
-                <label className="field"><span className="field-label">Дата рождения</span><input className="input" type="date" value={one.birthDate} onChange={(e) => setOne({ ...one, birthDate: e.target.value })} /></label>
+                <div className="field"><span className="field-label">Дата рождения</span><DatePicker label="Дата рождения" value={one.birthDate} onChange={(birthDate) => setOne({ ...one, birthDate })} min={birthMin()} max={todayIso()} /></div>
                 <label className="field"><span className="field-label">Заключение ТПМПК</span><input className="input" value={one.tpmpk} onChange={(e) => setOne({ ...one, tpmpk: e.target.value })} placeholder="необязательно" /></label>
               </div>
               <h3 className="h3 rel-title">Родители и родственники</h3>
@@ -78,7 +80,7 @@ export default function ChildrenPage({ db }) {
               </div>
             </form>
           ) : (
-            <form onSubmit={addChildren} style={{ display: 'grid', gap: 12 }}>
+            <form noValidate onSubmit={addChildren} style={{ display: 'grid', gap: 12 }}>
               <label className="field">
                 <span className="field-label">Фамилия и имя — по одному ребёнку на строку</span>
                 <textarea className="input" rows={5} autoFocus value={names} onChange={(e) => setNames(e.target.value)} placeholder={'Белкина Соня\nВоронов Лев'} />
@@ -93,7 +95,7 @@ export default function ChildrenPage({ db }) {
         </div>
       )}
       {mode === 'group' && (
-        <form className="form" onSubmit={addGroup}>
+        <form noValidate className="form" onSubmit={addGroup}>
           <label className="field">
             <span className="field-label">Название группы</span>
             <input className="input" autoFocus value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="Группа № 7, старшая" />
@@ -136,7 +138,7 @@ export default function ChildrenPage({ db }) {
                     <td className="num muted">{i + 1}</td>
                     <td><a className="name" href={href(`/child/${c.id}`)}>{c.name}</a></td>
                     <td>{ageText(c.birthDate) || <span className="faint">не указан</span>}</td>
-                    <td>{c.relatives?.length ? <span title={c.relatives.map((r) => `${r.role}: ${r.name} ${phonesText(r)}`).join('\n')}>{c.relatives.map((r) => r.role || 'контакт').join(', ')}</span> : <a className="text-action" href={href(`/child/${c.id}`)}><span>добавить</span></a>}</td>
+                    <td>{c.relatives?.length ? <span data-tip={c.relatives.map((r) => `${r.role}: ${r.name} ${phonesText(r)}`).join('\n')}>{c.relatives.map((r) => r.role || 'контакт').join(', ')}</span> : <a className="text-action" href={href(`/child/${c.id}`)}><span>добавить</span></a>}</td>
                     <td className={`r num ${pr.filled === pr.total ? 'ok' : ''}`}>{pr.filled}/{pr.total}</td>
                     {BLOCKS.map((b) => {
                       const m = blockMean(b.sections, s)

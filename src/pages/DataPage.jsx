@@ -1,16 +1,15 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
+import FilePick from '../ui/FilePick'
 import { actions, getDb } from '../lib/store'
 import { downloadText, importLegacyWorkbook } from '../lib/excel'
 import { buildDemo } from '../lib/demo'
-import { DownloadIcon, PlusIcon, TrashIcon, UploadIcon } from '../components/Icons'
+import { DownloadIcon, PlusIcon, TrashIcon, UploadIcon } from '../ui/Icons'
 
 export default function DataPage({ db }) {
   const [status, setStatus] = useState(null)
   const [busy, setBusy] = useState(false)
   const [askClear, setAskClear] = useState(false)
   const [askYear, setAskYear] = useState(null)
-  const xls = useRef(null)
-  const json = useRef(null)
 
   const years = [...new Set(db.periods.map((p) => p.year))]
   const nextYear = () => {
@@ -23,8 +22,7 @@ export default function DataPage({ db }) {
     return db.children.filter((c) => ids.some((id) => Object.keys(db.scores[c.id]?.[id] || {}).length)).length
   }
 
-  const onXls = async (e) => {
-    const f = e.target.files?.[0]
+  const onXls = async (f) => {
     if (!f) return
     setBusy(true)
     try {
@@ -35,11 +33,9 @@ export default function DataPage({ db }) {
       setStatus({ ok: false, text: err.message || 'Не удалось прочитать файл Excel.' })
     } finally {
       setBusy(false)
-      e.target.value = ''
     }
   }
-  const onJson = async (e) => {
-    const f = e.target.files?.[0]
+  const onJson = async (f) => {
     if (!f) return
     try {
       const data = JSON.parse(await f.text())
@@ -49,7 +45,6 @@ export default function DataPage({ db }) {
     } catch {
       setStatus({ ok: false, text: 'Это не резервная копия «Ростка»: выберите файл .json, выгруженный отсюда же.' })
     } finally {
-      e.target.value = ''
     }
   }
 
@@ -61,8 +56,7 @@ export default function DataPage({ db }) {
         <div className="block-head"><h2>Резервная копия</h2><span className="faint num">групп {db.groups.length} · детей {db.children.length}</span></div>
         <div className="toolbar">
           <button className="btn-primary" onClick={() => downloadText(`Росток — копия ${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(getDb()))}><DownloadIcon /> Выгрузить копию</button>
-          <button className="btn-ghost" onClick={() => json.current.click()}><UploadIcon /> Восстановить из копии</button>
-          <input ref={json} type="file" accept=".json,application/json" hidden onChange={onJson} />
+          <FilePick accept=".json,application/json" onFile={onJson}><UploadIcon /> Восстановить из копии</FilePick>
         </div>
         <p className="faint" style={{ marginTop: 10, maxWidth: 620 }}>Восстановление заменяет все текущие данные содержимым файла.</p>
       </section>
@@ -71,9 +65,8 @@ export default function DataPage({ db }) {
         <div className="block-head"><h2>Прежний файл Excel</h2></div>
         <p className="prose" style={{ marginTop: 0 }}>Книга «Динамика речевого развития» (листы «Звук…», «Л.Г.С.…», «Фонетика…») загружается как новая группа: переносятся фамилии и все проставленные баллы. В прежнем файле 3 означало норму — при загрузке шкала переводится в принятую здесь (0 — норма).</p>
         <div className="toolbar">
-          <button className="btn-ghost" disabled={busy} onClick={() => xls.current.click()}><UploadIcon /> {busy ? 'Читаю файл…' : 'Загрузить файл Excel'}</button>
+          <FilePick accept=".xls,.xlsx" disabled={busy} onFile={onXls}><UploadIcon /> {busy ? 'Читаю файл…' : 'Загрузить файл Excel'}</FilePick>
           <button className="btn-ghost" onClick={() => { actions.merge(buildDemo()); setStatus({ ok: true, text: 'Добавлена группа-пример с вымышленными детьми.' }) }}>Добавить группу-пример</button>
-          <input ref={xls} type="file" accept=".xls,.xlsx" hidden onChange={onXls} />
         </div>
       </section>
 

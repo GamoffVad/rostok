@@ -1,11 +1,12 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
+import FilePick from '../ui/FilePick'
 import { actions, libraryOf } from '../lib/store'
 import { useUi, setUi } from '../lib/ui'
 import { ALL_SECTIONS, BLOCKS, SECTION_BY_ID, sectionItems } from '../data/methodology'
 import { EXAMPLE_LIBRARY } from '../data/exercises'
 import { exerciseLines } from '../lib/program'
 import { exportLibraryTemplate, importLibraryTemplate } from '../lib/excel'
-import { DownloadIcon, UploadIcon } from '../components/Icons'
+import { DownloadIcon, UploadIcon } from '../ui/Icons'
 
 const ALL_IDS = new Set(ALL_SECTIONS.flatMap((s) => sectionItems(s).map((i) => i.id)))
 // Разделы без балльной оценки в программу не попадают — упражнения к ним не нужны.
@@ -20,14 +21,12 @@ export default function LibraryPage({ db }) {
   const section = SECTION_BY_ID[ui.librarySection] && WITH_EXERCISES(SECTION_BY_ID[ui.librarySection]) ? SECTION_BY_ID[ui.librarySection] : sections[0]
   const [status, setStatus] = useState(null)
   const [ask, setAsk] = useState(null)
-  const file = useRef(null)
 
   const filledIn = (s) => sectionItems(s).filter((i) => exerciseLines(library[i.id]).length).length
   const totalFilled = sections.reduce((a, s) => a + filledIn(s), 0)
   const totalItems = sections.reduce((a, s) => a + sectionItems(s).length, 0)
 
-  const onFile = async (e) => {
-    const f = e.target.files?.[0]
+  const onFile = async (f) => {
     if (!f) return
     try {
       const patch = await importLibraryTemplate(f, ALL_IDS)
@@ -36,7 +35,6 @@ export default function LibraryPage({ db }) {
     } catch (err) {
       setStatus({ ok: false, text: err.message || 'Не удалось прочитать файл.' })
     } finally {
-      e.target.value = ''
     }
   }
 
@@ -49,8 +47,7 @@ export default function LibraryPage({ db }) {
         </div>
         <div className="page-actions">
           <button className="btn-ghost" onClick={() => exportLibraryTemplate(BLOCKS, library)}><DownloadIcon /> Шаблон Excel</button>
-          <button className="btn-ghost" onClick={() => file.current.click()}><UploadIcon /> Загрузить из Excel</button>
-          <input ref={file} type="file" accept=".xls,.xlsx" hidden onChange={onFile} />
+          <FilePick accept=".xls,.xlsx" onFile={onFile}><UploadIcon /> Загрузить из Excel</FilePick>
         </div>
       </div>
       {status && <p className={`status ${status.ok ? 'ok' : 'bad'}`} role="status">{status.text}</p>}

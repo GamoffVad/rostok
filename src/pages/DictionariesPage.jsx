@@ -3,9 +3,9 @@ import { actions } from '../lib/store'
 import { useUi, setUi } from '../lib/ui'
 import { DICTS, DICT_BY_ID, changedCount, defaultList, defaultValue } from '../lib/dicts'
 import { ALL_SECTIONS } from '../data/methodology'
-import Dropdown from '../components/Dropdown'
-import { Level } from '../components/Level'
-import { PlusIcon, TrashIcon } from '../components/Icons'
+import Dropdown from '../ui/Dropdown'
+import { Level } from '../ui/Level'
+import { PlusIcon, TrashIcon } from '../ui/Icons'
 
 const GROUPS = [...new Set(DICTS.map((d) => d.group))]
 
@@ -28,7 +28,7 @@ export default function DictionariesPage({ db }) {
                 return (
                   <button key={d.id} className={`tree-row${d.id === dict.id ? ' is-active' : ''}`} onClick={() => { setUi({ dictId: d.id }); setAsk(false) }}>
                     <span className="tree-name">{d.title}</span>
-                    {n > 0 && <span className="tree-count dict-changed" title="Есть изменения">изм. {d.type === 'list' ? '' : n}</span>}
+                    {n > 0 && <span className="tree-count dict-changed" data-tip="Есть изменения">изм. {d.type === 'list' ? '' : n}</span>}
                   </button>
                 )
               })}
@@ -135,9 +135,9 @@ function ListEditor({ dict, value }) {
         <div className="dict-list-row" key={i}>
           <span className="num muted dict-list-num">{i + 1}</span>
           <input className="input" value={item} onChange={(e) => save(list.map((x, k) => (k === i ? e.target.value : x)))} aria-label={`${dict.title}: ${i + 1}`} />
-          <button type="button" className="icon-btn" disabled={i === 0} onClick={() => move(i, -1)} aria-label="Выше" title="Выше">↑</button>
-          <button type="button" className="icon-btn" disabled={i === list.length - 1} onClick={() => move(i, 1)} aria-label="Ниже" title="Ниже">↓</button>
-          <button type="button" className="icon-btn danger" onClick={() => save(list.filter((_, k) => k !== i))} aria-label="Удалить" title="Удалить"><TrashIcon /></button>
+          <button type="button" className="icon-btn" disabled={i === 0} onClick={() => move(i, -1)} aria-label="Выше" data-tip="Выше">↑</button>
+          <button type="button" className="icon-btn" disabled={i === list.length - 1} onClick={() => move(i, 1)} aria-label="Ниже" data-tip="Ниже">↓</button>
+          <button type="button" className="icon-btn danger" onClick={() => save(list.filter((_, k) => k !== i))} aria-label="Удалить" data-tip="Удалить"><TrashIcon /></button>
         </div>
       ))}
       <button type="button" className="btn-ghost" style={{ justifySelf: 'start' }} onClick={() => save([...list, ''])}><PlusIcon /> Добавить значение</button>

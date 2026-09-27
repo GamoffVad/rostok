@@ -1,5 +1,5 @@
 import { SCALE, SOUND_STATES } from '../data/methodology'
-import { Level } from '../components/Level'
+import { Level } from '../ui/Level'
 
 export default function HelpPage() {
   return (

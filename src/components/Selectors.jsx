@@ -1,5 +1,5 @@
-import Dropdown from './Dropdown'
-import FilterCard from './FilterCard'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
 import { setUi } from '../lib/ui'
 import { periodLabel } from '../lib/store'
 

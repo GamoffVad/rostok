@@ -4,11 +4,11 @@ import { useSelection, setUi } from '../lib/ui'
 import { ALL_SECTIONS, BLOCKS, SECTION_BY_ID, isScored, optionsFor, sectionItems } from '../data/methodology'
 import { fmt, itemScore, levelDistribution, sectionStats } from '../lib/calc'
 import { exportSheets } from '../lib/excel'
-import Dropdown from '../components/Dropdown'
-import FilterCard from '../components/FilterCard'
+import Dropdown from '../ui/Dropdown'
+import FilterCard from '../ui/FilterCard'
 import { GroupFilter, PeriodFilter } from '../components/Selectors'
-import { DistBar, Level } from '../components/Level'
-import { DownloadIcon } from '../components/Icons'
+import { DistBar, Level } from '../ui/Level'
+import { DownloadIcon } from '../ui/Icons'
 
 export default function ProtocolPage({ db }) {
   const { group, period, sectionId } = useSelection(db)
@@ -127,8 +127,8 @@ export default function ProtocolPage({ db }) {
                   {section.groups.map((gr) => gr.items.map((item, i) => {
                     col += 1
                     return section.kind === 'sound'
-                      ? <th key={item.id} className={`hsound${i === 0 ? ' first-in-grp' : ''}`} title={item.label}>{item.short}</th>
-                      : <th key={item.id} className={i === 0 ? 'first-in-grp' : ''} title={item.label}><div className={`vhead${col === active.c ? ' is-col' : ''}`}>{item.short}</div></th>
+                      ? <th key={item.id} className={`hsound${i === 0 ? ' first-in-grp' : ''}`} data-tip={item.label}>{item.short}</th>
+                      : <th key={item.id} className={i === 0 ? 'first-in-grp' : ''} data-tip={item.label}><div className={`vhead${col === active.c ? ' is-col' : ''}`}>{item.short}</div></th>
                   }))}
                   {scored && <><th className="sum first-in-grp">Σ</th><th className="sum">ср.</th><th className="sum">ур.</th></>}
                   <th className="filler" />
