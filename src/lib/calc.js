@@ -1,4 +1,7 @@
 import { ALL_SECTIONS, SOUND_STATES, SPEECH_SECTIONS, isScored, sectionItems } from '../data/methodology'
+import { OUTCOMES } from '../data/dictionaries'
+
+export { OUTCOMES }
 
 const SOUND_SCORE = Object.fromEntries(SOUND_STATES.map((s) => [s.value, s.score]))
 
@@ -61,20 +64,15 @@ export function totalProgress(scores = {}) {
 export function outcome(startMean, endMean) {
   if (startMean === null || endMean === null) return null
   const delta = startMean - endMean
-  if (levelOf(endMean) === 0) return { id: 'norm', label: 'возрастная норма', delta }
-  if (delta >= 1) return { id: 'major', label: 'значительное улучшение', delta }
-  if (delta >= 0.3) return { id: 'minor', label: 'улучшение', delta }
-  if (delta > -0.3) return { id: 'none', label: 'без выраженной динамики', delta }
-  return { id: 'worse', label: 'отрицательная динамика', delta }
+  let id = 'worse'
+  if (levelOf(endMean) === 0) id = 'norm'
+  else if (delta >= 1) id = 'major'
+  else if (delta >= 0.3) id = 'minor'
+  else if (delta > -0.3) id = 'none'
+  // подпись итога — из словаря, чтобы правка в «Администрирование → Словари» была видна везде
+  return { id, label: OUTCOMES.find((o) => o.id === id).label, delta }
 }
 
-export const OUTCOMES = [
-  { id: 'norm', label: 'возрастная норма' },
-  { id: 'major', label: 'значительное улучшение' },
-  { id: 'minor', label: 'улучшение' },
-  { id: 'none', label: 'без выраженной динамики' },
-  { id: 'worse', label: 'отрицательная динамика' },
-]
 
 // Распределение детей по уровням 0–3 для раздела и среза (аналог СЧЁТЕСЛИ в сводной).
 export function levelDistribution(section, childIds, getScores) {

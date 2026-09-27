@@ -243,7 +243,7 @@ export const BLOCKS = [
   },
 ]
 
-export const ALL_SECTIONS = BLOCKS.flatMap((b) => b.sections.map((s) => ({ ...s, blockId: b.id })))
+export const ALL_SECTIONS = BLOCKS.flatMap((b) => b.sections.map((s) => Object.assign(s, { blockId: b.id })))
 export const SECTION_BY_ID = Object.fromEntries(ALL_SECTIONS.map((s) => [s.id, s]))
 export const sectionItems = (section) => section.groups.flatMap((gr) => gr.items)
 

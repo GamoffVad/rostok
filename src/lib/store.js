@@ -1,11 +1,13 @@
 import { useSyncExternalStore } from 'react'
 import { EXAMPLE_LIBRARY } from '../data/exercises'
+import { applyDicts } from './dicts'
+export { POINT_NAMES } from '../data/dictionaries'
 
 // Данные хранятся только в браузере (localStorage): сведения о детях не покидают компьютер специалиста.
 const KEY = 'rostok.db.v1'
 
 // library отсутствует → показываются образцы упражнений; пустой объект — специалист очистил библиотеку.
-const emptyDb = () => ({ version: 1, groups: [], children: [], periods: [], scores: {}, notes: {}, programs: {} })
+const emptyDb = () => ({ version: 1, groups: [], children: [], periods: [], scores: {}, notes: {}, programs: {}, dicts: {} })
 
 function load() {
   try {
@@ -18,10 +20,12 @@ function load() {
 }
 
 let db = load()
+applyDicts(db.dicts)
 let saveError = false
 const listeners = new Set()
 
 function commit(next) {
+  if (next.dicts !== db.dicts) applyDicts(next.dicts)
   db = next
   try {
     localStorage.setItem(KEY, JSON.stringify(db))
@@ -47,7 +51,6 @@ export function currentAcademicYear(now = new Date()) {
 export const periodLabel = (p) => (p ? `${p.year} · ${p.point}` : '')
 // Короткая подпись среза для графиков и шапок таблиц: «НГ 25/26».
 export const periodShort = (p) => (p ? `${p.point} ${p.year.slice(2, 4)}/${p.year.slice(-2)}` : '')
-export const POINT_NAMES = { НГ: 'начало года', КГ: 'конец года' }
 
 export const actions = {
   addGroup(name) {
@@ -120,6 +123,26 @@ export const actions = {
   },
   setExercise(itemId, text) {
     commit({ ...db, library: { ...libraryOf(db), [itemId]: text } })
+  },
+  // Правка словаря: значение, совпавшее с умолчанием, не хранится.
+  setDictValue(dictId, row, field, value, def) {
+    const dict = { ...(db.dicts?.[dictId] || {}) }
+    const fields = { ...(dict[row] || {}) }
+    if (value === def) delete fields[field]
+    else fields[field] = value
+    if (Object.keys(fields).length) dict[row] = fields
+    else delete dict[row]
+    const dicts = { ...db.dicts, [dictId]: dict }
+    if (!Object.keys(dict).length) delete dicts[dictId]
+    commit({ ...db, dicts })
+  },
+  setDictList(dictId, list) {
+    commit({ ...db, dicts: { ...db.dicts, [dictId]: list } })
+  },
+  resetDict(dictId) {
+    const dicts = { ...db.dicts }
+    delete dicts[dictId]
+    commit({ ...db, dicts })
   },
   setLibrary(library) {
     commit({ ...db, library })

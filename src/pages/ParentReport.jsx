@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { libraryOf, periodLabel, periodShort, POINT_NAMES, programOf, scoresOf } from '../lib/store'
+import { libraryOf, periodLabel, periodShort, programOf, scoresOf } from '../lib/store'
+import { PARENT_LEVEL, POINT_NAMES } from '../data/dictionaries'
 import { href } from '../lib/router'
 import { ALL_SECTIONS, BLOCKS, NEURO_SCORED, SPEECH_SECTIONS, isScored, optionsFor, sectionItems } from '../data/methodology'
 import { ageText, blockMean, fmt, itemScore, levelOf, outcome, sectionStats } from '../lib/calc'
@@ -12,14 +13,6 @@ import { Delta, Level } from '../components/Level'
 import { Dumbbell, Radar, TrendLine } from '../components/Charts'
 import { ArrowIcon, DownloadIcon, PrintIcon } from '../components/Icons'
 import { addressesText, emailsText, phonesText } from '../components/RelativesEditor'
-
-// Понятные родителям формулировки уровней.
-const PARENT_LEVEL = [
-  'соответствует возрасту',
-  'формируется — нужны регулярные занятия',
-  'отстаёт от возрастной нормы — нужна коррекционная работа',
-  'значительно отстаёт — нужна систематическая коррекционная работа',
-]
 
 const PARTS = [
   { key: 'speech', label: 'Речевое развитие' },

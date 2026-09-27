@@ -389,12 +389,6 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
 .doc-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; border-top: 1px dashed var(--dash); padding-top: 16px; margin-top: 18px; font-size: 13px; color: var(--ink-3); }
 
 /* ── Родители и родственники ────────────────────────── */
-.relatives { display: grid; gap: 12px; }
-.relative { border: 0; border-left: 2px solid var(--accent); margin: 0; padding: 4px 0 8px 12px; min-width: 0; }
-.relative-head { padding: 0; }
-.relative-grid { display: grid; gap: 10px; margin-top: 6px; }
-.relative-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; }
-.relatives > .btn-ghost { justify-self: start; }
 
 /* ── Футер: закреплён снизу, версия справа мелким серым ── */
 .app-footer {
@@ -413,19 +407,60 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
 .app-version { font-family: var(--mono); font-size: 11px; color: var(--faint); flex: none; }
 
 /* ── Контакты родителей: списки телефонов, почт, адресов ── */
-.relative-contacts { display: grid; gap: 12px; margin: 12px 0; }
-.multi { display: grid; gap: 6px; align-content: start; min-width: 0; }
-.multi .field-label { margin-bottom: 0; }
 /* на телефоне вид («мобильный», «проживания») — строкой над значением, чтобы не обрезался */
-.multi-row { display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: "kind kind" "value del"; gap: 6px; align-items: start; }
+
+/* ── Администрирование → Словари ─────────────────────── */
+.dict-changed { color: var(--accent); font-weight: 600; }
+.dict-filter { display: grid; gap: 5px; max-width: 460px; margin-bottom: 14px; }
+.dict-table { width: 100%; }
+.dict-table td { vertical-align: top; padding: 8px 8px 8px 0; }
+.dict-table th { padding-left: 0; }
+.dict-table .input { font-size: 16px; padding: 8px 10px; }
+.dict-table textarea.input { min-height: 0; field-sizing: content; resize: vertical; }
+.dict-table tr.is-changed td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+.dict-lead { width: 1px; white-space: nowrap; padding-left: 10px !important; color: var(--ink-3); }
+.dict-lead .lvl { margin-right: 4px; }
+.dict-narrow-cell { width: 180px; }
+.dict-table th:not(.dict-lead) { min-width: 140px; }
+.dict-default { display: block; margin-top: 3px; font-size: 11.5px; color: var(--faint); }
+/* на телефоне строка словаря — карточка: подпись поля над значением */
+@media (max-width: 767px) {
+  .dict-table, .dict-table tbody, .dict-table tr, .dict-table td { display: block; width: auto; }
+  .dict-table thead { display: none; }
+  .dict-table tr { padding: 10px 0 12px 10px; border-bottom: 1px solid var(--line); }
+  .dict-table td { border: 0; padding: 0 0 8px; }
+  .dict-table td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+  .dict-table .dict-lead { padding: 0 0 6px !important; }
+  .dict-narrow-cell { width: auto; }
+}
+.dict-nav { display: grid; }
+.dict-list { display: grid; gap: 8px; max-width: 560px; }
+.dict-list-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) 44px 44px 44px; gap: 6px; align-items: center; }
+.dict-list-num { font-size: 12px; text-align: right; }
+.icon-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* ── Карточка родителя: сетка «подпись — значения», компактно ── */
+.relatives { display: grid; gap: 14px; }
+.relative { border: 0; border-left: 2px solid var(--accent); margin: 0; padding: 2px 0 6px 12px; min-width: 0; display: grid; gap: 8px; }
+.relative-head .text-action { white-space: nowrap; }
+.relative-head { display: flex; width: 100%; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0; float: left; margin-bottom: 2px; }
+.relative-head + * { clear: both; }
+.rel-top { display: grid; gap: 8px; }
+.rel-legal { min-height: 44px; }
+.rel-row { display: grid; gap: 4px; align-items: start; }
+.rel-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); padding-top: 2px; }
+.rel-items { display: grid; gap: 6px; min-width: 0; }
+.rel-add { justify-self: start; min-height: 32px; }
+/* на телефоне: вид и корзина — первой строкой, значение — на всю ширину под ними */
+.multi-row { display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: "kind del" "value value"; gap: 6px; align-items: start; }
 .multi-row--plain { grid-template-areas: "value del"; }
-.multi-kind { grid-area: kind; max-width: 220px; }
-.multi-value { grid-area: value; }
-.multi-row .icon-btn { grid-area: del; }
-.multi-row .input { min-width: 0; }
+.multi-row > .dd { grid-area: kind; max-width: 220px; }
+.multi-row > .input { grid-area: value; }
+.multi-row > .icon-btn { grid-area: del; }
 .multi-row + .multi-row { margin-top: 4px; }
+.multi-row .input { min-width: 0; }
 .multi-row textarea.input { min-height: 44px; field-sizing: content; resize: vertical; }
-.multi .text-action { justify-self: start; }
+.rel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 
 /* ── Справка, заметки ─────────────────────────────────── */
 .help-note { border-left: 1px solid var(--accent); padding: 2px 0 2px 14px; margin: 14px 0; font-size: 13px; max-width: 68ch; }
@@ -461,12 +496,25 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
   .form-grid .span-2 { grid-column: span 2; }
   .lib-row { grid-template-columns: minmax(160px, 240px) 1fr; align-items: start; gap: 16px; }
   .doc-mean { display: table-cell; }
-  .relative-grid { grid-template-columns: 180px minmax(0, 1fr); }
-  .multi-row { grid-template-columns: 130px minmax(0, 1fr) 34px; grid-template-areas: "kind value del"; }
-  .multi-row--plain { grid-template-columns: minmax(0, 1fr) 34px; grid-template-areas: "value del"; }
-  .multi-row .icon-btn { width: 34px; height: 34px; }
   .doc-mean-inline { display: none; }
   .lib-row textarea.input { font-size: 13px; }
+  .dict-table .input { font-size: 13px; }
+  .rel-top { grid-template-columns: 200px minmax(0, 1fr) auto; align-items: end; column-gap: 10px; }
+  .rel-legal { min-height: 38px; white-space: nowrap; }
+  .rel-row { grid-template-columns: 120px minmax(0, 1fr); column-gap: 10px; }
+  .rel-label { padding-top: 11px; }
+  .rel-top .rel-label, .rel-top .field-label { padding-top: 0; }
+  .relative .input { padding: 8px 10px; }
+  .relative .dd--light .dd-btn { min-height: 38px; }
+  .relative .icon-btn { width: 38px; height: 38px; }
+  .rel-items { max-width: 760px; }
+  .multi-row { grid-template-columns: 160px minmax(0, 1fr) 38px; grid-template-areas: "kind value del"; }
+  .multi-row--plain { grid-template-columns: minmax(0, 1fr) 38px; grid-template-areas: "value del"; }
+  .multi-row + .multi-row { margin-top: 0; }
+  .multi-row textarea.input { min-height: 38px; }
+  .rel-add { min-height: 28px; }
+  .dict-list-row { grid-template-columns: 22px minmax(0, 1fr) 34px 34px 34px; }
+  .dict-list-row .icon-btn { width: 34px; height: 34px; }
   .mark--wide { width: auto; }
 }
 
@@ -499,11 +547,9 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.55; }
   :root { --shell-pad: 40px; --grid-gap: 26px; }
   .round-btn { width: 38px; height: 38px; }
   .sticky-side { top: 128px; }
-  .relative-contacts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .split--340 { grid-template-columns: 320px minmax(0, 1fr); }
   .split--300 { grid-template-columns: 288px minmax(0, 1fr); }
   .split--main { grid-template-columns: minmax(0, 1fr) 320px; }
-  .relative-grid { grid-template-columns: 180px minmax(0, 1fr); }
   .split--half { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .employee-list { max-height: calc(100vh - 300px); }
   .sticky-side { position: sticky; top: 16px; align-self: start; }

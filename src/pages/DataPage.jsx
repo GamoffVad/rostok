@@ -55,12 +55,6 @@ export default function DataPage({ db }) {
 
   return (
     <>
-      <div className="page-header">
-        <div>
-          <h1>Данные</h1>
-          <p className="subtitle">Сведения о детях хранятся только в этом браузере и никуда не отправляются. Раз в неделю выгружайте резервную копию — она же переносит данные на другой компьютер.</p>
-        </div>
-      </div>
       {status && <p className={`status ${status.ok ? 'ok' : 'bad'}`} role="status">{status.text}</p>}
 
       <section className="card" style={{ borderTop: 0 }}>

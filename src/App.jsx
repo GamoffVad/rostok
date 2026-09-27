@@ -8,7 +8,7 @@ import ChildPage from './pages/ChildPage'
 import ExamPage from './pages/ExamPage'
 import ProtocolPage from './pages/ProtocolPage'
 import DynamicsPage from './pages/DynamicsPage'
-import DataPage from './pages/DataPage'
+import AdminPage from './pages/AdminPage'
 import HelpPage from './pages/HelpPage'
 import Welcome from './pages/Welcome'
 import LibraryPage from './pages/LibraryPage'
@@ -42,7 +42,7 @@ export default function App() {
 
   let page
   if (section === 'help') page = <HelpPage />
-  else if (section === 'data') page = <DataPage db={db} />
+  else if (section === 'admin' || section === 'data') page = <AdminPage db={db} tab={section === 'data' ? 'data' : route.parts[1]} />
   else if (section === 'library') page = <LibraryPage db={db} />
   else if (empty) page = <Welcome />
   else if (section === 'child') page = <ChildPage db={db} childId={route.parts[1]} tab={route.params.tab} />
@@ -79,7 +79,7 @@ export default function App() {
             ))}
           </nav>
           <div className="topbar-tools">
-            <a className="round-btn" href={href('/data')} title="Данные: импорт, выгрузка, учебные годы" aria-label="Данные" aria-current={section === 'data' ? 'page' : undefined}><DatabaseIcon /></a>
+            <a className="round-btn" href={href('/admin/data')} title="Администрирование: данные и словари" aria-label="Администрирование" aria-current={section === 'admin' || section === 'data' ? 'page' : undefined}><DatabaseIcon /></a>
             <a className="round-btn" href={href('/help')} title="Справка по методике" aria-label="Справка" aria-current={section === 'help' ? 'page' : undefined}><HelpIcon /></a>
           </div>
         </header>

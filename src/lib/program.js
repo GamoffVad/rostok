@@ -1,10 +1,7 @@
 import { BLOCKS, RECOMMENDATIONS, isScored, optionsFor, sectionItems } from '../data/methodology'
 import { itemScore, sectionStats } from './calc'
 
-export const THRESHOLDS = [
-  { value: 2, label: 'уровень 2–3: нужна коррекция' },
-  { value: 1, label: 'уровень 1–3: включая формирующиеся' },
-]
+export { THRESHOLDS } from '../data/dictionaries'
 
 // Проба — дефицит, если балл не ниже порога; звук — если он не в норме; сканирование — если не сформировано.
 function isDeficit(section, value, threshold) {

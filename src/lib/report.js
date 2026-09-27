@@ -1,14 +1,7 @@
 import { BLOCKS, RECOMMENDATIONS, SCAN_OPTIONS, SOUND_STATES, isScored, sectionItems } from '../data/methodology'
 import { ageText, fmt, itemScore, outcome, sectionStats, speechMean } from './calc'
-import { POINT_NAMES } from './store'
+import { LEVEL_PHRASE, POINT_NAMES } from '../data/dictionaries'
 
-const LEVEL_PHRASE = [
-  'соответствует возрастной норме',
-  'в процессе формирования, требуется развитие',
-  'не соответствует возрастной норме, необходима коррекция',
-  'выраженно не соответствует норме, необходима коррекция',
-]
-const SOUND_LABEL = Object.fromEntries(SOUND_STATES.map((s) => [s.value, s.label]))
 const SIDE_WORD = {
   nl_eye: { right: 'правый', left: 'левый' },
   nl_hand: { right: 'правая', left: 'левая' },
@@ -19,6 +12,7 @@ const upper = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 
 // Черновик заключения: собирается из баллов, специалист правит текст перед печатью.
 export function buildReport({ child, group, period, scores, prevPeriod, prevScores, note }) {
+  const SOUND_LABEL = Object.fromEntries(SOUND_STATES.map((s) => [s.value, s.label]))
   const lines = []
   lines.push('ЗАКЛЮЧЕНИЕ ПО РЕЗУЛЬТАТАМ ОБСЛЕДОВАНИЯ')
   lines.push('')
