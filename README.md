@@ -103,6 +103,7 @@ src/
   theme.js, index.css   токены и стили дизайн-системы (см. DESIGN.md)
 DOC/                    документация (PDF и HTML) и её иллюстрации
 .github/                баннер README, сборка и релизы (GitHub Actions)
+scripts/                changelog-notes.mjs — описание релиза из CHANGELOG
 ```
 
 ## Конфиденциальность

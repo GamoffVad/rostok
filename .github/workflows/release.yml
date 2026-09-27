@@ -22,13 +22,12 @@ jobs:
       - name: Версия из тега совпадает с package.json
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
       - name: Описание из CHANGELOG
+        run: node scripts/changelog-notes.mjs "${GITHUB_REF_NAME#v}" > notes.md && cat notes.md
+      - name: Архив сборки и документация
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          awk -v v="$VERSION" '$0 ~ "^## \[" v "\]" {f=1; next} /^## \[/ {f=0} /^\[.*\]: / {f=0} f' CHANGELOG.md > notes.md
-          cat notes.md
-      - name: Архив сборки
-        run: cd dist && zip -r "../rostok-${GITHUB_REF_NAME}.zip" .
+          (cd dist && zip -r "../rostok-${GITHUB_REF_NAME}.zip" .)
+          cp "DOC/Росток — документация.pdf" "rostok-documentation-${GITHUB_REF_NAME}.pdf"
       - name: Создать релиз
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --title "Росток $GITHUB_REF_NAME" --notes-file notes.md "rostok-${GITHUB_REF_NAME}.zip" "DOC/Росток — документация.pdf"
+        run: gh release create "$GITHUB_REF_NAME" --title "Росток $GITHUB_REF_NAME" --notes-file notes.md "rostok-${GITHUB_REF_NAME}.zip" "rostok-documentation-${GITHUB_REF_NAME}.pdf"
