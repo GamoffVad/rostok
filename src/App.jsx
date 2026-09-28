@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
-import { actions, useDb, hasSaveError } from './lib/store'
+import { useEffect, useState } from 'react'
+import { actions, storageActions, useDb, useStorage, hasSaveError } from './lib/store'
 import { buildDemo } from './lib/demo'
 import { useRoute, href } from './lib/router'
-import { DatabaseIcon, HelpIcon } from './ui/Icons'
+import { DatabaseIcon, HelpIcon, LockIcon } from './ui/Icons'
+import LockScreen from './pages/LockScreen'
 import TooltipLayer from './ui/Tooltip'
 import ChildrenPage from './pages/ChildrenPage'
 import ChildPage from './pages/ChildPage'
@@ -26,11 +27,45 @@ const NAV = [
 // При самом первом открытии загружаем группу-пример: ссылку можно показать сразу, данные остаются в браузере.
 const SEED_KEY = 'rostok.seeded'
 
+const BACKUP_REMIND_DAYS = 7
+
+// Автоблокировка: при включённой защите база закрывается после простоя
+function useAutoLock(storage) {
+  useEffect(() => {
+    if (storage.status !== 'ready' || !storage.encrypted || !storage.autoLockMin) return undefined
+    let timer
+    const arm = () => { clearTimeout(timer); timer = setTimeout(() => storageActions.lock(), storage.autoLockMin * 60000) }
+    const events = ['pointerdown', 'keydown', 'wheel', 'touchstart']
+    events.forEach((e) => window.addEventListener(e, arm, { passive: true }))
+    arm()
+    return () => { clearTimeout(timer); events.forEach((e) => window.removeEventListener(e, arm)) }
+  }, [storage.status, storage.encrypted, storage.autoLockMin])
+}
+
 export default function App() {
+  const storage = useStorage()
+  useAutoLock(storage)
+  if (storage.status === 'loading') return <div className="app-shell"><p className="faint boot">Открываю локальную базу…</p></div>
+  if (storage.status === 'locked') return <><LockScreen /><TooltipLayer /></>
+  if (storage.status === 'error') {
+    return (
+      <div className="app-shell">
+        <div className="empty boot">
+          <h1>Не удалось открыть базу</h1>
+          <p className="subtitle">{storage.error}. Локальная база не работает в режиме инкогнито некоторых браузеров и при запрете хранения данных сайтов — откройте приложение в обычном окне.</p>
+        </div>
+      </div>
+    )
+  }
+  return <Workspace storage={storage} />
+}
+
+function Workspace({ storage }) {
   const db = useDb()
   const route = useRoute()
   const section = route.parts[0] || ''
   const empty = !db.groups.length
+  const [hideRemind, setHideRemind] = useState(false)
 
   useEffect(() => {
     let seeded = false
@@ -40,6 +75,9 @@ export default function App() {
       try { localStorage.setItem(SEED_KEY, '1') } catch { /* без отметки */ }
     }
   }, [empty])
+
+  const days = storage.lastBackupAt ? Math.floor((Date.now() - storage.lastBackupAt) / 86400000) : null
+  const remind = !hideRemind && db.children.length > 0 && (days === null || days >= BACKUP_REMIND_DAYS) && section !== 'admin'
 
   let page
   if (section === 'help') page = <HelpPage />
@@ -82,9 +120,17 @@ export default function App() {
           <div className="topbar-tools">
             <a className="round-btn" href={href('/admin/data')} data-tip="Администрирование: данные и словари" aria-label="Администрирование" aria-current={section === 'admin' || section === 'data' ? 'page' : undefined}><DatabaseIcon /></a>
             <a className="round-btn" href={href('/help')} data-tip="Справка по методике" aria-label="Справка" aria-current={section === 'help' ? 'page' : undefined}><HelpIcon /></a>
+            {storage.encrypted && <button type="button" className="round-btn" onClick={() => storageActions.lock()} data-tip="Заблокировать базу" aria-label="Заблокировать базу"><LockIcon /></button>}
           </div>
         </header>
-        {hasSaveError() && <p className="status bad">Не удалось сохранить изменения: хранилище браузера переполнено или недоступно. Выгрузите резервную копию в разделе «Данные».</p>}
+        {hasSaveError() && <p className="status bad">Не удалось сохранить изменения в локальную базу: место в браузере закончилось или доступ к хранилищу запрещён. Выгрузите резервную копию в «Администрирование → Данные».</p>}
+        {remind && (
+          <p className="remind" role="status">
+            {days === null ? 'Резервной копии данных ещё нет.' : `Последняя резервная копия — ${days} дн. назад.`} Данные хранятся только в этом браузере: сделайте копию в файл.
+            <a className="text-action" href={href('/admin/data')}><span>сделать копию</span></a>
+            <button type="button" className="text-action" onClick={() => setHideRemind(true)}><span>позже</span></button>
+          </p>
+        )}
         <main>{page}</main>
       </div>
       <Footer />

@@ -16,3 +16,6 @@ export const TableIcon = I(<><rect x="4" y="5" width="16" height="14" rx="1" /><
 export const CalendarIcon = I(<><rect x="4" y="5" width="16" height="15" rx="1" /><path d="M4 10h16M9 3v4M15 3v4" /></>)
 export const ChevronLeftIcon = I(<path d="M15 5l-7 7 7 7" />)
 export const ChevronRightIcon = I(<path d="M9 5l7 7-7 7" />)
+export const LockIcon = I(<><rect x="5" y="11" width="14" height="9" rx="1" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>)
+export const ShieldIcon = I(<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" />)
+export const HistoryIcon = I(<><path d="M4 12a8 8 0 1 0 2.3-5.6M4 5v4h4" /><path d="M12 8v4l3 2" /></>)

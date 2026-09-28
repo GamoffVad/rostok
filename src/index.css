@@ -535,6 +535,26 @@ input::-webkit-calendar-picker-indicator { display: none; }
 .kit-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
 .kit-icon { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 8px; border: 1px dashed var(--dash); border-radius: 2px; font-size: 12px; color: var(--ink-2); }
 
+/* ── Локальная база: вход, напоминание, сведения ─────── */
+.boot { padding: 48px 0; }
+.lock { min-height: 100vh; display: grid; place-items: center; padding: 24px var(--shell-pad); background: var(--paper); }
+.lock-card { width: 100%; max-width: 400px; border-top: 2px solid var(--accent); padding-top: 22px; }
+.lock-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.lock-brand img { width: 40px; height: 40px; }
+.lock-form { display: grid; gap: 12px; margin: 18px 0 20px; }
+.lock-form .btn-primary { justify-self: start; }
+.lock-forgot { border-top: 1px dashed var(--dash); padding-top: 12px; display: grid; gap: 10px; }
+.lock-forgot .faint { margin: 0; }
+.lock-danger { color: var(--danger); border-color: var(--danger); }
+.input.is-invalid { border-color: var(--danger); }
+.remind { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin: 10px 0 0; padding: 8px 0 8px 12px; border-left: 1px solid var(--amber); font-size: 13px; color: var(--ink-2); }
+.facts { display: grid; gap: 8px 24px; margin: 0; }
+.facts > div { display: grid; gap: 2px; }
+.facts dt { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.facts dd { margin: 0; font-size: 13.5px; color: var(--ink); }
+.facts dd svg { vertical-align: -2px; }
+.pw-form { max-width: 460px; }
+
 /* ── Справка, заметки ─────────────────────────────────── */
 .help-note { border-left: 1px solid var(--accent); padding: 2px 0 2px 14px; margin: 14px 0; font-size: 13px; max-width: 68ch; }
 .help-note.amber { border-left-color: var(--amber); }
@@ -572,6 +592,7 @@ input::-webkit-calendar-picker-indicator { display: none; }
   .doc-mean-inline { display: none; }
   .lib-row textarea.input { font-size: 13px; }
   .dict-table .input { font-size: 13px; }
+  .facts > div { grid-template-columns: 220px minmax(0, 1fr); align-items: baseline; }
   .kit-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
   .cbx { min-height: 32px; }
   .dp-day { height: 34px; }
