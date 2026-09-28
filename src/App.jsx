@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { actions, storageActions, useDb, useStorage, hasSaveError } from './lib/store'
 import { buildDemo } from './lib/demo'
 import { useRoute, href } from './lib/router'
-import { DatabaseIcon, HelpIcon, LockIcon } from './ui/Icons'
+import { GearIcon, HelpIcon, LockIcon } from './ui/Icons'
 import LockScreen from './pages/LockScreen'
 import TooltipLayer from './ui/Tooltip'
 import ChildrenPage from './pages/ChildrenPage'
@@ -118,7 +118,7 @@ function Workspace({ storage }) {
             ))}
           </nav>
           <div className="topbar-tools">
-            <a className="round-btn" href={href('/admin/data')} data-tip="Администрирование: данные и словари" aria-label="Администрирование" aria-current={section === 'admin' || section === 'data' ? 'page' : undefined}><DatabaseIcon /></a>
+            <a className="round-btn" href={href('/admin/data')} data-tip="Администрирование: данные и словари" aria-label="Администрирование" aria-current={section === 'admin' || section === 'data' ? 'page' : undefined}><GearIcon /></a>
             <a className="round-btn" href={href('/help')} data-tip="Справка по методике" aria-label="Справка" aria-current={section === 'help' ? 'page' : undefined}><HelpIcon /></a>
             {storage.encrypted && <button type="button" className="round-btn" onClick={() => storageActions.lock()} data-tip="Заблокировать базу" aria-label="Заблокировать базу"><LockIcon /></button>}
           </div>
